@@ -1,6 +1,6 @@
 FROM fluxms/flux-eco-biotope:1.4.0 AS medi-course-management-backend
 USER root
-COPY --chown=www-data:www-data ../../app /opt/medi-course-management-backend/app
+COPY --chown=www-data:www-data ./app /opt/medi-course-management-backend/app
 USER www-data
 WORKDIR /app
 

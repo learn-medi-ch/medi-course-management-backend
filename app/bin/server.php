@@ -24,17 +24,12 @@ $server->set(
     ]
 );
 
-$onRequest = function ($request, $response) use ($server) {
+$onRequest = function ($request) use ($server) {
     $rawData = $request->rawContent();
     echo '[' . date('Y-m-d H:i:s') . ']'. PHP_EOL . 'Channel ==>' . $request->server['request_uri'] . PHP_EOL . 'Content of request ==>' . $rawData . PHP_EOL;
 
-
     $httpApi =  Api::new();
-    $result = $httpApi->handleHttpRequest($request);
-
-    $response->header('Content-Type', 'application/json');
-    $response->header('Cache-Control', 'no-cache');
-    $response->end(json_encode($result, JSON_UNESCAPED_UNICODE));
+    $result = $httpApi->handleHttpRequest($request, $response);
 };
 
 $server->on('request', $onRequest);

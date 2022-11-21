@@ -2,9 +2,9 @@
 
 namespace Medi\CourseManagementBackend\Adapters\Configs;
 
-use Medi\CourseManagementBackend\Core\Ports;
+use Medi\CourseManagementBackend\Core;
 
-class Configs implements Ports\Configs
+class Configs implements Core\Configs
 {
     public static function new() {
         return new self();

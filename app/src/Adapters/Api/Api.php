@@ -3,61 +3,46 @@
 namespace Medi\CourseManagementBackend\Adapters\Api;
 
 use Medi\CourseManagementBackend\Adapters;
-use Medi\CourseManagementBackend\Core\Ports;
+use Medi\CourseManagementBackend\Core;
 
 use Swoole\Http;
 
 class Api
 {
-    private Ports\Service $apiGatewayService;
     const REQUEST_TYPE_COMMAND = 'command';
     const REQUEST_TYPE_QUERY = 'query';
 
-    private function __construct(Ports\Service $apiGatewayService)
+    private function __construct(private Core\Actor $actor)
     {
-        $this->apiGatewayService = $apiGatewayService;
+
     }
 
     public static function new() : self
     {
-        $apiGatewayService = Ports\Service::new(Adapters\Configs\Configs::new());
-        return new self($apiGatewayService);
+        return new self(Core\Actor::new(Adapters\Configs\Configs::new()));
     }
 
-    final public function handleHttpRequest(Http\Request $request) : array
+    final public function handleHttpRequest(Http\Request $request, Http\Response $response) : array
     {
+
+        $iliasUserId = $request->header['x-flux-ilias-api-user-id'];
+        echo $iliasUserId;
+
         $requestUri = $request->server['request_uri'];
-        $requestType = $this->getRequestType($requestUri);
-        //todo
-        $actorId = 'actor@fluxlabs.ch';
 
-        switch ($requestType) {
-            case self::REQUEST_TYPE_COMMAND:
-                $requestContent = [];
-                if (!empty($request->getContent())) {
-                    $requestContent = json_decode($request->getContent(), true);
-                }
-                $this->apiGatewayService->command($actorId, $requestUri, $requestContent);
-                return ['status' => 'success'];
-            case self::REQUEST_TYPE_QUERY:
-                $requestContent = [];
-                if (!empty($request->get)) {
-                    $requestContent = $request->get;
-                }
-                return $this->apiGatewayService->query($actorId, $requestUri, $requestContent);
-        }
+        //todo handle with api.json
+
+        //toRemove
+        return ['status' => 'success', 'request' => $requestUri];
     }
 
-    private function getRequestType(string $requestUri) : string
+    private function response(Http\Response $response)
     {
-        if (str_contains($requestUri, self::REQUEST_TYPE_COMMAND)) {
-            return self::REQUEST_TYPE_COMMAND;
-        }
-
-        if (str_contains($requestUri, self::REQUEST_TYPE_QUERY)) {
-            return self::REQUEST_TYPE_QUERY;
-        }
-
-        throw new \RuntimeException('No valid Request Type found for requestUri: ' . $requestUri);
+        return function (object $event) use ($response) {
+            $response->header('Content-Type', 'application/json');
+            $response->header('Cache-Control', 'no-cache');
+            $response->end(json_encode($event, JSON_UNESCAPED_UNICODE));
+        };
     }
+
 }

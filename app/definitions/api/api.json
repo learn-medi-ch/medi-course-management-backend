@@ -1,3 +1,16 @@
 {
-  "namespace": "Medi\\CourseManagementBackend"
+  "namespace": "Medi\\CourseManagementBackend",
+  "reactions": {
+    "createHeader": {
+      "onMessage": "/ot/classes/projectKeyValueList",
+      "process": "handle",
+      "payload": {
+        "command": "{$applicationId}/layout/appendTemplateContent",
+        "commandPayload": {
+          "templateName": "header",
+          "parentId": "flux-learnplaces/layout"
+        }
+      }
+    }
+  }
 }

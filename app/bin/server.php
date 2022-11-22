@@ -3,10 +3,10 @@ require_once __DIR__ . '/autoloader.php';
 use Medi\CourseManagementBackend\Adapters\Api\Api;
 
 $server = new Swoole\Http\Server('0.0.0.0', getenv('SWOOLE_HTTP_PORT'));
-
+//'SWOOLE_HTTP_WORKER_NUM'
 $server->set(
     [
-        'worker_num' => getenv('SWOOLE_HTTP_WORKER_NUM'),        //number of worker processes
+        'worker_num' => getenv(1),        //number of worker processes
         'max_conn' => getenv('SWOOLE_HTTP_MAX_CONN'),           //Maximum number of connections allowed. This parameter is used to set the maximum number of TCP connections allowed by the Server. After this number is exceeded, new incoming connections will be rejected.
         'max_request' => getenv('SWOOLE_HTTP_MAX_REQUEST'),       //This parameter indicates that the worker process ends after processing n requests. The manager will recreate a worker process. This option is used to prevent memory overflow in the worker process.
         'task_worker_num' => getenv('SWOOLE_HTTP_TASK_WORKER_NUM'),    //Set the maximum number of tasks for the task process
@@ -24,12 +24,12 @@ $server->set(
     ]
 );
 
-$onRequest = function ($request) use ($server) {
+$onRequest = function ($request, $response) use ($server) {
     $rawData = $request->rawContent();
     echo '[' . date('Y-m-d H:i:s') . ']'. PHP_EOL . 'Channel ==>' . $request->server['request_uri'] . PHP_EOL . 'Content of request ==>' . $rawData . PHP_EOL;
 
     $httpApi =  Api::new();
-    $result = $httpApi->handleHttpRequest($request, $response);
+    $httpApi->handleHttpRequest($request, $response);
 };
 
 $server->on('request', $onRequest);

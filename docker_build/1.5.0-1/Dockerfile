@@ -1,12 +1,11 @@
 FROM fluxms/flux-eco-biotope:1.4.0 AS medi-course-management-backend
 USER root
-COPY --chown=www-data:www-data ./app /opt/medi-course-management-backend/app
+COPY --chown=www-data:www-data ./app /app
+RUN (mkdir -p /app/libs/flux-ilias-rest-api-client && cd /app/libs/flux-ilias-rest-api-client && wget -O - https://github.com/fluxfw/flux-ilias-rest-api-client/releases/download/v2022-08-02-1/flux-ilias-rest-api-client-v2022-08-02-1-build.tar.gz | tar -xz --strip-components=1)
+
 USER www-data
 WORKDIR /app
 
-RUN (mkdir -p /app/libs/flux-ilias-rest-api-client && cd libs/flux-ilias-rest-api-client && wget -O - https://github.com/fluxfw/flux-ilias-rest-api-client/releases/download/v2022-08-02-1/flux-ilias-rest-api-client-v2022-08-02-1-build.tar.gz | tar -xz --strip-components=1)
-
-WORKDIR /app
 
 ENV FLUX_ILIAS_REST_API_CLIENT_URL='http://127.0.0.11/flux-ilias-rest-api'
 ENV FLUX_ILIAS_REST_API_CLIENT_USER='api'
@@ -31,4 +30,4 @@ ENV SWOOLE_HTTP_LOG_FILE_PATH_NAME=/opt/medi-course-management-backend/logs/http
 ENV ILIAS_URL=https://learn.medi.ch
 ENV ILIAS_CLIENT=medi01
 
-ENTRYPOINT ["sh", "docker_entrypoint.sh"]
+ENTRYPOINT ["sh", "./docker_entrypoint.sh"]

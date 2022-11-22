@@ -43,11 +43,11 @@ class Api
             );
         };
 
-        $handleProjectTo = function ($object) use ($requestUri, $getParam, $response): void {
+        $handleProjectTo = function (string $jsonData) use ($requestUri, $getParam, $response): void {
             $this->configs->projectTo(
                 $getParam('projectionType'),
                 $this->publish($response)
-            )($object);
+            )($jsonData);
         };
 
         $handleProjectTo($getData());

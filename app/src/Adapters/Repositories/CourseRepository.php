@@ -11,7 +11,7 @@ class CourseRepository {
 
     public function getList($parentRefId): string {
        // RestApi::new();
-        return "[{refId: 20, title: 'any title', description: 'any description'}]";
+        return '[{"refId": 20, "title": "any title", "description": "any description"}]';
     }
 
 }

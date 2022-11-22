@@ -8,6 +8,14 @@ class KeyValueList {
     }
 
     public function project(string $jsonData, callable $publish) {
-        $publish($jsonData);
+        echo $jsonData;
+        $objList = json_decode($jsonData);
+
+        $data = [];
+        foreach($objList as $obj) {
+            $data[] = '{ id: "refId/'.$obj->refId.'", title: "'.$obj->title.'" }';
+        }
+
+        $publish(json_encode($data, JSON_UNESCAPED_UNICODE + JSON_UNESCAPED_SLASHES));
     }
 }

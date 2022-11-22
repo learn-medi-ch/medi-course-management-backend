@@ -46,11 +46,4 @@ class Configs
         }
         return $this->contexts[$contextType]($parentIdOrId);
     }
-
-    private function courseList(int $parentRefId, callable $projectTo)
-    {
-
-    }
-
-
 }

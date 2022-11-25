@@ -4,17 +4,20 @@ namespace Medi\CourseManagementBackend\Adapters\Configs;
 
 use Medi\CourseManagementBackend\Adapters;
 use mysql_xdevapi\Exception;
+use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
 
 class Configs
 {
-
+    private IliasRestApiClient $iliasRestApiClient;
     public array $contexts;
     private array $projectTo;
 
-    private function __construct()
+    private function __construct(IliasRestApiClient $iliasRestApiClient)
     {
-        $this->contexts['courseList'] = function ($parentRefId): string {
-            return Adapters\Repositories\CourseRepository::new()->getList($parentRefId);
+        $this->iliasRestApiClient = $iliasRestApiClient;
+
+        $this->contexts['courseList'] = function (int $parentRefId): string {
+            return Adapters\Repositories\CourseRepository::new($this->iliasRestApiClient)->getList($parentRefId);
         };
 
         $this->projectTo['keyValueList'] = function (callable $publish): callable {
@@ -26,7 +29,7 @@ class Configs
 
     public static function new()
     {
-        return new self();
+        return new self(IliasRestApiClient::new());
     }
 
     public function projectTo(string $projectionType, callable $publish): callable

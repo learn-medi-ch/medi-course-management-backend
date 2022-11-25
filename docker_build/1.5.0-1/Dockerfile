@@ -6,7 +6,7 @@ RUN (mkdir -p /app/libs/flux-ilias-rest-api-client && cd /app/libs/flux-ilias-re
 USER www-data
 WORKDIR /app
 
-
+ENV FLUX_ILIAS_REST_API_CLIENT_URL='http://nginx'
 ENV FLUX_ILIAS_REST_API_CLIENT_USER='api'
 
 ENV SWOOLE_HTTP_PORT=9501

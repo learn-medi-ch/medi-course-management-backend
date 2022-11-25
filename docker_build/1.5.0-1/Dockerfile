@@ -27,6 +27,5 @@ ENV SWOOLE_HTTP_OPEN_TCP_NODELAY=1
 
 ENV SWOOLE_HTTP_LOG_FILE_PATH_NAME=/opt/medi-course-management-backend/logs/http.log
 ENV ILIAS_URL=https://learn.medi.ch
-ENV ILIAS_CLIENT=medi01
 
 ENTRYPOINT ["sh", "./docker_entrypoint.sh"]

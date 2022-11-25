@@ -16,5 +16,5 @@ spl_autoload_register(function (string $class) use ($namespace, $baseDirectory) 
         return;
     }
     $filePath = str_replace('\\', '/', $classNameParts[1]) . '.php';
-    require $baseDirectory . '/' . $filePath;
+    require $baseDirectory . $filePath;
 });

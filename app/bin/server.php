@@ -5,13 +5,6 @@ require_once __DIR__ . '/autoloader.php';
 require_once  __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClient.php';
 require_once  __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClientConfigDto.php';
 
-$included_files = get_included_files();
-
-foreach ($included_files as $filename) {
-    echo "$filename\n";
-}
-
-
 use Medi\CourseManagementBackend\Adapters\Api\Api;
 
 $server = new Swoole\Http\Server('0.0.0.0', getenv('SWOOLE_HTTP_PORT'));

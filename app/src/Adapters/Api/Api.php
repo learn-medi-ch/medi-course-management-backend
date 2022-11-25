@@ -2,29 +2,36 @@
 
 namespace Medi\CourseManagementBackend\Adapters\Api;
 
-use Medi\CourseManagementBackend\Adapters;
+use Medi\CourseManagementBackend\Core\Ports;
+use Medi\CourseManagementBackend\Adapters\Projections\Projection;
+use Medi\CourseManagementBackend\Adapters\Publishers\Publisher;
 use Swoole\Http;
+use Medi\CourseManagementBackend\Adapters\Formatter\Formatter;
+use Medi\CourseManagementBackend\Adapters\Actions\Action;
+use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
 
 class Api
 {
-    private Adapters\Configs\Configs $configs;
+    private Ports\Service $service;
 
     private function __construct()
     {
-        $this->configs = Adapters\Configs\Configs::new();
+        $this->service = Ports\Service::new();
     }
 
-    public static function new(): self
+    public static function new() : self
     {
         return new self();
     }
 
-    final public function handleHttpRequest(Http\Request $request, Http\Response $response): void
+    /**
+     * @throws \Exception
+     */
+    final public function handleHttpRequest(Http\Request $request, Http\Response $response) : void
     {
-        //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/projection/courseList/parentIdOrId/81/projectionType/keyValueList
         $requestUri = $request->server['request_uri'];
 
-        $getParam = function ($parameterName) use ($requestUri): string {
+        $getParam = function ($parameterName) use ($requestUri) : string {
             $explodedParam = explode($parameterName . "/", $requestUri, 2);
             if (count($explodedParam) === 2) {
                 $explodedParts = explode("/", $explodedParam[1], 2);
@@ -36,21 +43,27 @@ class Api
             return "";
         };
 
-        $getData = function () use ($requestUri, $getParam, $response): array {
-            return $this->configs->data(
-                $getParam('projection'),
-                $getParam('parentIdOrId')
-            );
-        };
+        $restApiClient = IliasRestApiClient::new();
 
-        $handleProjectTo = function (array|object $objectListOrObject) use ($requestUri, $getParam, $response): void {
-            $this->configs->projectTo(
-                $getParam('projectionType'),
-                $this->publish($response)
-            )($objectListOrObject);
-        };
+        switch (true) {
+            case str_contains($requestUri, 'publishData'):
+                //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/projection/courseList/parentIdOrId/81/projectionType/keyValueList/publishData
+                $this->service->publishData(
+                    Formatter::from($getParam('projectionType'))->format(Projection::from($getParam('projection'))->byParentRefId($getParam('parentIdOrId'))),
+                    Publisher::JSON_DATA_PUBLISHER->get($this->publish($response)),
+                );
+                break;
+            case str_contains($requestUri, 'enrollClassMembers'):
+                //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/parentIdOrId/81/class/RS_22-25_B/enrollClassMembers
+                $this->service->enrollMembers(
+                    Formatter::OBJ_ID_ARRAY->format(Projection::USER_LIST->byFieldValue("Klasse", $getParam('class'))),
+                    Formatter::REF_ID_ARRAY->format(Projection::COURSE_LIST->byParentRefId($getParam('parentIdOrId'))),
+                    Action::ENROLL_TO_COURSE->get($restApiClient),
+                    Publisher::JSON_DATA_PUBLISHER->get($this->publish($response))
+                );
+                break;
+        }
 
-        $handleProjectTo($getData());
     }
 
     private function publish(Http\Response $response)

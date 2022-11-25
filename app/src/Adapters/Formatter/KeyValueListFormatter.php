@@ -1,15 +1,15 @@
 <?php
 
-namespace Medi\CourseManagementBackend\Adapters\ProjectionTypes;
+namespace Medi\CourseManagementBackend\Adapters\Formatter;
 
 use stdClass;
 
-class KeyValueList {
+class KeyValueListFormatter {
     public static function new() {
         return new self();
     }
 
-    public function project(array $objList, callable $publish) {
+    public function format(array $objList): object {
 
         $data =  new StdClass();
         foreach($objList as $obj) {
@@ -19,6 +19,6 @@ class KeyValueList {
             $data->{"ref_id_".$obj->ref_id} = $object;
         }
 
-        $publish(json_encode($data, JSON_UNESCAPED_UNICODE + JSON_UNESCAPED_SLASHES));
+        return $data;
     }
 }

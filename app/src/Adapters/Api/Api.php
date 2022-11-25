@@ -21,7 +21,7 @@ class Api
 
     final public function handleHttpRequest(Http\Request $request, Http\Response $response): void
     {
-        //example request_uri: /projection/courseList/parentIdOrId/333/projectionType/keyValueList
+        //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/projection/courseList/parentIdOrId/81/projectionType/keyValueList
         $requestUri = $request->server['request_uri'];
 
         $getParam = function ($parameterName) use ($requestUri): string {
@@ -36,18 +36,18 @@ class Api
             return "";
         };
 
-        $getData = function () use ($requestUri, $getParam, $response): string {
+        $getData = function () use ($requestUri, $getParam, $response): array {
             return $this->configs->data(
                 $getParam('projection'),
                 $getParam('parentIdOrId')
             );
         };
 
-        $handleProjectTo = function (string $jsonData) use ($requestUri, $getParam, $response): void {
+        $handleProjectTo = function (array|object $objectListOrObject) use ($requestUri, $getParam, $response): void {
             $this->configs->projectTo(
                 $getParam('projectionType'),
                 $this->publish($response)
-            )($jsonData);
+            )($objectListOrObject);
         };
 
         $handleProjectTo($getData());

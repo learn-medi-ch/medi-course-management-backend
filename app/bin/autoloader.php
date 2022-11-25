@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../libs/flux-ilias-rest-api-client/autoload.php";
+require_once __DIR__ . "/../flux-ilias-rest-api-client/autoload.php";
 
 $api = json_decode(
     file_get_contents( '/app/definitions/api/api.json'),

@@ -13,8 +13,8 @@ class CourseRepository {
         return new self($iliasRestApiClient);
     }
 
-    public function getList(int $parentRefId): string {
-        return json_encode(array_map(fn(ObjectDto $object): array => ["refId" => $object->ref_id, "title" => $object->title, "description" => $object->description], $this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::COURSE) ?? []));
+    public function getList(int $parentRefId): array {
+        return $this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::COURSE) ?? [];
     }
 
 }

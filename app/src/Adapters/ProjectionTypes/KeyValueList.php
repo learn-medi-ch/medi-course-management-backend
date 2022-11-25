@@ -2,18 +2,21 @@
 
 namespace Medi\CourseManagementBackend\Adapters\ProjectionTypes;
 
+use stdClass;
+
 class KeyValueList {
     public static function new() {
         return new self();
     }
 
-    public function project(string $jsonData, callable $publish) {
-        echo $jsonData;
-        $objList = json_decode($jsonData);
+    public function project(array $objList, callable $publish) {
 
-        $data = [];
+        $data =  new StdClass();
         foreach($objList as $obj) {
-            $data[] = '{ id: "refId/'.$obj->refId.'", title: "'.$obj->title.'" }';
+            $object = new StdClass();
+            $object->id = "refId/".$obj->ref_id;
+            $object->title = $obj->title;
+            $data->{"ref_id_".$obj->ref_id} = $object;
         }
 
         $publish(json_encode($data, JSON_UNESCAPED_UNICODE + JSON_UNESCAPED_SLASHES));

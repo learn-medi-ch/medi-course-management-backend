@@ -2,16 +2,19 @@
 
 namespace Medi\CourseManagementBackend\Adapters\Repositories;
 
-use FluxIliasRestApiClient\Libs\FluxRestApi\Adapter\Api\RestApi;
+use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
+use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Object\DefaultObjectType;
+use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Object\ObjectDto;
 
 class CourseRepository {
-    public static function new() {
-        return new self();
+    private function __construct(private readonly IliasRestApiClient $iliasRestApiClient) { }
+
+    public static function new(IliasRestApiClient $iliasRestApiClient) {
+        return new self($iliasRestApiClient);
     }
 
-    public function getList($parentRefId): string {
-       // RestApi::new();
-        return '[{"refId": 20, "title": "any title", "description": "any description"}]';
+    public function getList(int $parentRefId): string {
+        return json_encode(array_map(fn(ObjectDto $object): array => ["refId" => $object->ref_id, "title" => $object->title, "description" => $object->description], $this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::COURSE) ?? []));
     }
 
 }

@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/autoloader.php';
+require_once __DIR__ . '/../autoload.php';
 
 //todo
 require_once  __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClient.php';

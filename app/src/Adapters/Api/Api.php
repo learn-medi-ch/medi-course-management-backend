@@ -2,13 +2,18 @@
 
 namespace Medi\CourseManagementBackend\Adapters\Api;
 
+//todo
+require_once __DIR__ . '/../../../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClient.php';
+require_once __DIR__ . '/../../../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClientConfigDto.php';
+
 use Medi\CourseManagementBackend\Core\Ports;
 use Medi\CourseManagementBackend\Adapters\Projections\Projection;
 use Medi\CourseManagementBackend\Adapters\Publishers\Publisher;
 use Swoole\Http;
 use Medi\CourseManagementBackend\Adapters\Formatter\Formatter;
-use Medi\CourseManagementBackend\Adapters\Actions\Action;
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
+use Medi\CourseManagementBackend\Core\Domain\Models\KeyValueObject;
+use Medi\CourseManagementBackend\Adapters\Repositories;
 
 class Api
 {
@@ -16,7 +21,14 @@ class Api
 
     private function __construct()
     {
-        $this->service = Ports\Service::new();
+        $this->service = Ports\Service::new(
+            Repositories\UserRepository::new(
+                IliasRestApiClient::new()
+            ),
+            Repositories\CourseRepository::new(
+                IliasRestApiClient::new()
+            )
+        );
     }
 
     public static function new() : self
@@ -58,12 +70,77 @@ class Api
                 $this->service->enrollMembers(
                     Formatter::OBJ_ID_ARRAY->format(Projection::USER_LIST->byFieldValue("Klasse", $getParam('class'))),
                     Formatter::REF_ID_ARRAY->format(Projection::COURSE_LIST->byParentRefId($getParam('parentIdOrId'))),
-                    Action::ENROLL_TO_COURSE->get($restApiClient),
+                    Operation::ENROLL_TO_COURSE->get($restApiClient),
                     Publisher::JSON_DATA_PUBLISHER->get($this->publish($response))
                 );
                 break;
         }
 
+        /**
+         *   $addressParts = explode("/",$address);
+         * $operationName = end($addressParts);
+         * $payloadObject = json_decode($payload);
+         * $payloadObject = $this->hydratePayload($address,$operationName, $payloadObject);
+         */
+
+    }
+
+    private function handle(string $operationName, object $operation, callable $next)
+    {
+        $next($this->service->{$operationName}($operation));
+    }
+
+    public function process(Operation $operation, callable $publish)
+    {
+        $currentCommand = $operation->command;
+        $result = $this->service->{$currentCommand->name}($currentCommand);
+        $currentCommand->setProperty($result);
+
+        if ($operation->next !== null) {
+            $nextCommand = $operation->next->command;
+            $overNextOperation = $operation->next->next;
+            $nextCommand->setProperty($result);
+            $this->process(
+                Operation::new(
+                    $nextCommand, $overNextOperation
+                ),
+                $publish
+            );
+        } else {
+            $publish($currentCommand);
+        }
+
+
+
+        /*
+        if ($payload->next !== null) {
+            $this->handle($payload->operationName, $payload->operationPayload, fn(object $result) => $this->process(
+                Operation::new(
+                    $payload->next->operationName,
+                    (object) array_merge((array) $payload->operation, (array) $result),
+                    $payload->next->next
+                ),
+                $publish
+            ));
+        }*/
+
+        /*$this->handle($payload->operationName, $payload->operationPayload,
+            fn(object $result) => $publish(json_encode($result))
+        );*/
+    }
+
+    private function hydratePayload(string $address, string $operationName, object $payloadObject)
+    {
+        $addressParts = explode("crsmgmt-backend", $address);
+
+        next($addressParts);
+        foreach ($addressParts as $key => $part) {
+            if ($addressParts[$key] === $operationName) {
+                return $payloadObject;
+            }
+            $payloadObject->{$addressParts[$key]} = $addressParts[$key + 1];
+            next($addressParts);
+        }
     }
 
     private function publish(Http\Response $response)

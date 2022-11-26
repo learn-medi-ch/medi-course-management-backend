@@ -1,6 +1,6 @@
 <?php
 
-namespace Medi\CourseManagementBackend\Adapters\Actions;
+namespace Medi\CourseManagementBackend\Adapters\Operations;
 
 use Medi\CourseManagementBackend\Adapters\Repositories\CourseRepository;
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;

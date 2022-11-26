@@ -4,12 +4,14 @@ namespace Medi\CourseManagementBackend\Adapters\Formatter;
 use Medi\CourseManagementBackend\Core\Domain\Models\ArrayValue;
 use Medi\CourseManagementBackend\Core\Domain\Models\Keywords;
 
-class RefIdArrayFormatter {
+use stdClass;
+
+class UserArrayFormatter {
     public static function new() {
         return new self();
     }
 
-    public function format(array $objList): ArrayValue {
+    public function format(array $objList): object {
 
         $refIds =  [];
         foreach($objList as $obj) {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Medi\CourseManagementBackend\Core\Domain\Models;
+namespace Medi\CourseManagementBackend\Core\Domain\Models\Values;
 
-abstract class KeyValue
+abstract class PrimitiveValue implements Value
 {
 
     public function __construct(

@@ -31,7 +31,7 @@ $server->set(
 
 $onRequest = function ($request, $response) use ($server) {
     $rawData = $request->rawContent();
-    echo '[' . date('Y-m-d H:i:s') . ']'. PHP_EOL . 'Channel ==>' . $request->server['request_uri'] . PHP_EOL . 'Content of request ==>' . $rawData . PHP_EOL;
+    echo '[' . date('Y-m-d H:i:s') . ']'. PHP_EOL . 'Channel ==>' . $request->server['request_uri'] . PHP_EOL . 'Content of request ==> ' . $rawData . PHP_EOL;
 
     $httpApi =  Api::new();
     $httpApi->handleHttpRequest($request, $response);

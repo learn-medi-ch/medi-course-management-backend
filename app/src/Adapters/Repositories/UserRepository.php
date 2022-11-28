@@ -19,8 +19,14 @@ class UserRepository implements Ports\UserRepository
         return new self($iliasRestApiClient);
     }
 
-    public function byCustomField(string $fieldName, string $fieldValue) : array
+    public function getList(Models\UserFilter $filter) : array
     {
+        //
+        $users[] = UserDto::new(43);
+        $users[] = UserDto::new(5);
+        return $users;
+        //
+
         $users = $this->iliasRestApiClient->getUsers(
             null,
             null,
@@ -32,48 +38,8 @@ class UserRepository implements Ports\UserRepository
             true
         );
 
-        $response = [];
-
-        //todo
-        foreach ($users as $user) {
-            if (count($user->user_defined_fields) > 0) {
-                foreach ($user->user_defined_fields as $defined_field) {
-                    if ($defined_field->name === $fieldName && $defined_field->value === $fieldValue) {
-                        $response[] = $user;
-                    }
-                }
-            }
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param Models\UserFilter $filter
-     * @return Models\UserIds
-     */
-    public function getUserIds(Models\UserFilter $filter) : Models\ArrayValue
-    {
-        /*$users = $this->iliasRestApiClient->getUsers(
-            null,
-            null,
-            null,
-            null,
-            false,
-            false,
-            false,
-            true
-        );*/
-
-        $users[] = UserDto::new();
-
-        $filteredUserIds = [];
-
+        $filtered = [];
         if ($filter->getCustomUserFields()->hasProperties() === true) {
-
-            $filteredUserIds[] = '123';
-            return Formatter\RefIdArrayFormatter::new($filteredUserIds);
-
 
             //todo
             foreach ($users as $user) {
@@ -89,13 +55,22 @@ class UserRepository implements Ports\UserRepository
                             }
                         }
                         if ($satisfiesAllFilter === true) {
-                            $filteredUserIds[] = $user->id;
+                            $filtered[] = $user;
                         }
                     }
                 }
             }
         }
 
-        return Models\UserIds::new($filteredUserIds);
+        return $filtered;
+    }
+
+    /**
+     * @param Models\UserFilter $filter
+     * @return Models\UserIds
+     */
+    public function getUserIds(Models\UserFilter $filter) : Models\UserIds
+    {
+        return Formatter\UserIdsFormatter::new()->format($this->getList($filter));
     }
 }

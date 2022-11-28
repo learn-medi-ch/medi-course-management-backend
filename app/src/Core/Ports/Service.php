@@ -2,16 +2,14 @@
 
 namespace Medi\CourseManagementBackend\Core\Ports;
 
-use Medi\CourseManagementBackend\Core\Domain\Models\KeyValue;
-use Medi\CourseManagementBackend\Core\Domain\Models\ArrayValue;
+use Medi\CourseManagementBackend\Core\Domain;
 
 class Service
 {
     private function __construct(
         private UserRepository $userRepository,
         private CourseRepository $courseRepository
-    )
-    {
+    ) {
 
     }
 
@@ -25,28 +23,48 @@ class Service
         $publisher->handle(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 
-    public function getUserIds(GetUserIds $command): KeyValue {
-        return $this->userRepository->getUserIds($command->getUserFilter());
+    public function getUserIds(Commands\GetUserIds $command) : Domain\Models\UserIds
+    {
+        return $this->userRepository->getUserIds(Domain\Models\UserFilter::new($command->getCustomUserFields()));
     }
 
-    public function getCourseIds(GetCourseIds $command): ArrayValue {
+    public function getCourseIds(Commands\GetCourseIds $command) : Domain\Models\RefIds
+    {
         return $this->courseRepository->getRefIds();
     }
 
-    public function enrollMembersToCourses(EnrollMembersToCourse $payload)
+    /**
+     * @throws \Exception
+     */
+    public function enrollMembersToCourses(Commands\EnrollMembersToCourses $command) : object
     {
-        print_r($payload);
-        /*
-        foreach($payload->refIds as $refId) {
-            foreach($payload->userIds as $userId) {
-                $this->enrollMember(EnrollMemberPayload::new($refId, $userId));
+        foreach ($command->getRefIds() as $refId) {
+            foreach ($command->getUserIds() as $userId) {
+                $this->enrollMemberToCourse(Commands\EnrollMemberToCourse::new(
+                    $refId,
+                    $userId
+                )
+                );
             }
-        }*/
+        }
 
+        return Domain\Events\MembersEnrolledToCourses::new(
+            Domain\Models\RefIds::new($command->getRefIds()),
+            Domain\Models\UserIds::new($command->getUserIds())
+        );
     }
 
-    public function enrollMember(EnrollMemberPayload $payload)
+    public function enrollMemberToCourse(Commands\EnrollMemberToCourse $command) : object
     {
-        print_r($payload);
+        print_r($command);
+
+        return Domain\Events\MemberEnrolledToCourse::new(
+            Domain\Models\RefId::new(
+                $command->getRefId()
+            ),
+            Domain\Models\UserId::new(
+                $command->getUserId()
+            )
+        );
     }
 }

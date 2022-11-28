@@ -7,12 +7,10 @@ require_once __DIR__ . '/../../../flux-ilias-rest-api-client/src/Adapter/Api/Ili
 require_once __DIR__ . '/../../../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClientConfigDto.php';
 
 use Medi\CourseManagementBackend\Core\Ports;
-use Medi\CourseManagementBackend\Adapters\Projections\Projection;
-use Medi\CourseManagementBackend\Adapters\Publishers\Publisher;
 use Swoole\Http;
 use Medi\CourseManagementBackend\Adapters\Formatter\Formatter;
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
-use Medi\CourseManagementBackend\Core\Domain\Models\KeyValueObject;
+use Medi\CourseManagementBackend\Core\Ports\Commands;
 use Medi\CourseManagementBackend\Adapters\Repositories;
 
 class Api
@@ -43,6 +41,13 @@ class Api
     {
         $requestUri = $request->server['request_uri'];
 
+        if($request->rawContent()) {
+            $payload = json_decode($request->rawContent());
+            $process = Process::fromPayload($payload);
+            $this->process($process, $this->publish($response));
+        }
+
+
         $getParam = function ($parameterName) use ($requestUri) : string {
             $explodedParam = explode($parameterName . "/", $requestUri, 2);
             if (count($explodedParam) === 2) {
@@ -70,7 +75,7 @@ class Api
                 $this->service->enrollMembers(
                     Formatter::OBJ_ID_ARRAY->format(Projection::USER_LIST->byFieldValue("Klasse", $getParam('class'))),
                     Formatter::REF_ID_ARRAY->format(Projection::COURSE_LIST->byParentRefId($getParam('parentIdOrId'))),
-                    Operation::ENROLL_TO_COURSE->get($restApiClient),
+                    Process::ENROLL_TO_COURSE->get($restApiClient),
                     Publisher::JSON_DATA_PUBLISHER->get($this->publish($response))
                 );
                 break;
@@ -85,71 +90,49 @@ class Api
 
     }
 
-    private function handle(string $operationName, object $operation, callable $next)
+    /**
+     * @param Commands\CommandInstance[] $commands
+     * @param callable                   $next
+     * @return void
+     */
+    private function handle(array $commands, callable $onNext)
     {
-        $next($this->service->{$operationName}($operation));
+        $results = [];
+        foreach ($commands as $command) {
+            $results[] = $this->service->{$command->name}($command);
+        }
+        $onNext($results);
     }
 
-    public function process(Operation $operation, callable $publish)
+    public function process(Process $process, callable $onPublish)
     {
-        $currentCommand = $operation->command;
-        $result = $this->service->{$currentCommand->name}($currentCommand);
-        $currentCommand->setProperty($result);
-
-        if ($operation->next !== null) {
-            $nextCommand = $operation->next->command;
-            $overNextOperation = $operation->next->next;
-            $nextCommand->setProperty($result);
-            $this->process(
-                Operation::new(
-                    $nextCommand, $overNextOperation
-                ),
-                $publish
-            );
+        if ($process->next !== null) {
+            $nextProcess = $process->next;
+            $onNext = function (array $results) use ($nextProcess, $onPublish) {
+                $nextCommands = $nextProcess->commands;
+                foreach ($nextCommands as $nextCommand) {
+                    foreach ($results as $result) {
+                        //todo - create a new command?
+                        $nextCommand->setProperty($result);
+                    }
+                }
+                $this->process(Process::new($nextCommands, $nextProcess->next), $onPublish);
+            };
         } else {
-            $publish($currentCommand);
+            $onNext = function (array $result) use ($onPublish) {
+                $onPublish(Processed::new($result));
+            };
         }
 
-
-
-        /*
-        if ($payload->next !== null) {
-            $this->handle($payload->operationName, $payload->operationPayload, fn(object $result) => $this->process(
-                Operation::new(
-                    $payload->next->operationName,
-                    (object) array_merge((array) $payload->operation, (array) $result),
-                    $payload->next->next
-                ),
-                $publish
-            ));
-        }*/
-
-        /*$this->handle($payload->operationName, $payload->operationPayload,
-            fn(object $result) => $publish(json_encode($result))
-        );*/
-    }
-
-    private function hydratePayload(string $address, string $operationName, object $payloadObject)
-    {
-        $addressParts = explode("crsmgmt-backend", $address);
-
-        next($addressParts);
-        foreach ($addressParts as $key => $part) {
-            if ($addressParts[$key] === $operationName) {
-                return $payloadObject;
-            }
-            $payloadObject->{$addressParts[$key]} = $addressParts[$key + 1];
-            next($addressParts);
-        }
+        $this->handle($process->commands, $onNext);
     }
 
     private function publish(Http\Response $response)
     {
-        return function (string $jsonData) use ($response) {
+        return function (object $result) use ($response) {
             $response->header('Content-Type', 'application/json');
             $response->header('Cache-Control', 'no-cache');
-            $response->end($jsonData); //json_encode($data, JSON_UNESCAPED_UNICODE)
+            $response->end(json_encode($result)); //json_encode($data, JSON_UNESCAPED_UNICODE)
         };
     }
-
 }

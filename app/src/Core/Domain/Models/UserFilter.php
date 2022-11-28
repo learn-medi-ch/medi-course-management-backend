@@ -2,23 +2,16 @@
 
 namespace Medi\CourseManagementBackend\Core\Domain\Models;
 
-use stdClass;
-
-class UserFilter extends KeyValueObject
+class UserFilter extends ObjectInstance
 {
 
-    public static function new(): self {
-        return new self(Keywords::USER_FILTER->value, new stdClass());
-    }
-
-    public function appendCustomUserFieldsFilter(KeyValue $keyValue)
+    /**
+     * @param array $customUserFields
+     */
+    public static function new(array $customUserFields) : UserFilter
     {
-        $objectValue = ObjectValue::new(Keywords::CUSTOM_USER_FIELDS->value, $keyValue);
-        $this->setProperty($objectValue);
-        return $this;
-    }
 
-    public function getCustomUserFields(): KeyValueObject {
-        return $this->properties->{Keywords::CUSTOM_USER_FIELDS->value};
+        return new self(Value::USER_FILTER,
+            $customUserFields);
     }
 }

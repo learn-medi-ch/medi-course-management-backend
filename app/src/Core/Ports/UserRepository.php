@@ -8,5 +8,5 @@ interface UserRepository
 {
     public function getUserIds(
         Models\UserFilter $filter
-    ) : Models\ArrayValue;
+    ) : Models\UserIds;
 }

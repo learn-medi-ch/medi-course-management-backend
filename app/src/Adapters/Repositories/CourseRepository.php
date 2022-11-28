@@ -14,6 +14,7 @@ use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Role\RoleDto;
 use Medi\CourseManagementBackend\Adapters\Formatter;
 use stdClass;
 use Medi\CourseManagementBackend\Core\Domain\Models\ArrayValue;
+use Medi\CourseManagementBackend\Core\Domain\Models\RefIds;
 
 class CourseRepository implements Ports\CourseRepository
 {
@@ -31,6 +32,7 @@ class CourseRepository implements Ports\CourseRepository
         $obj = new stdClass();
         $obj->ref_id = 2;
         return [$obj];
+
         //todo $deep;
         return $this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::COURSE) ?? [];
     }
@@ -41,7 +43,7 @@ class CourseRepository implements Ports\CourseRepository
         $this->iliasRestApiClient->addCourseMemberByRefIdByUserId($refId, $userId, $diff);
     }
 
-    public function getRefIds() : ArrayValue
+    public function getRefIds() : RefIds
     {
         return Formatter\RefIdArrayFormatter::new()->format($this->getList(1));
     }

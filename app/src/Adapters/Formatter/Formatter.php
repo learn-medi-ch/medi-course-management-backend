@@ -18,7 +18,7 @@ enum Formatter: string
         return match ($this) {
             self::KEY_VALUE_LIST => KeyValueListFormatter::new()->format($listOrObject),
             self::OBJ_ID_ARRAY => ObjIdArrayFormatter::new()->format($listOrObject),
-            self::REF_ID_ARRAY => RefIdArrayFormatter::new()->format($listOrObject)
+            self::REF_ID_ARRAY => RefIdsFormatter::new()->format($listOrObject)
         };
     }
 }

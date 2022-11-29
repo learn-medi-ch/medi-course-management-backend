@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../autoload.php';
 
 //todo
-require_once  __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClient.php';
-require_once  __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClientConfigDto.php';
+require_once __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClient.php';
+require_once __DIR__ . '/../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClientConfigDto.php';
 
 use Medi\CourseManagementBackend\Adapters\Api\Api;
 

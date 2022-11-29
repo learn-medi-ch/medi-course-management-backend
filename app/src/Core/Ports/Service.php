@@ -8,14 +8,15 @@ class Service
 {
     private function __construct(
         private UserRepository $userRepository,
-        private CourseRepository $courseRepository
+        private CourseRepository $courseRepository,
+        private CategoryRepository $categoryRepository
     ) {
 
     }
 
-    public static function new(UserRepository $userRepository, CourseRepository $courseRepository)
+    public static function new(UserRepository $userRepository, CourseRepository $courseRepository, CategoryRepository $categoryRepository)
     {
-        return new self($userRepository, $courseRepository);
+        return new self($userRepository, $courseRepository, $categoryRepository);
     }
 
     public function publishData(array|object $data, Publisher $publisher)
@@ -31,6 +32,16 @@ class Service
     public function getCourseIds(Commands\GetCourseIds $command) : Domain\Models\RefIds
     {
         return $this->courseRepository->getRefIds();
+    }
+
+    public function getCourseTitles(Commands\GetCourseTitles $command) : Domain\Models\ObjectTitleList
+    {
+        return $this->courseRepository->getTitles($command->getParentRefId());
+    }
+
+    public function getCategoryTitles(Commands\GetCategoryTitles $command) : Domain\Models\ObjectTitleList
+    {
+        return $this->categoryRepository->getTitles($command->getParentRefId());
     }
 
     /**

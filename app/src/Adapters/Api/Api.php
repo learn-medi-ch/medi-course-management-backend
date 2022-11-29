@@ -11,7 +11,9 @@ use Swoole\Http;
 use Medi\CourseManagementBackend\Adapters\Formatter\Formatter;
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
 use Medi\CourseManagementBackend\Core\Ports\Commands;
+use Medi\CourseManagementBackend\Core\Domain;
 use Medi\CourseManagementBackend\Adapters\Repositories;
+
 
 class Api
 {
@@ -24,6 +26,9 @@ class Api
                 IliasRestApiClient::new()
             ),
             Repositories\CourseRepository::new(
+                IliasRestApiClient::new()
+            ),
+            Repositories\CategoryRepository::new(
                 IliasRestApiClient::new()
             )
         );
@@ -47,6 +52,18 @@ class Api
             $this->process($process, $this->publish($response));
         }
 
+        $getCommand = function($requestUri) {
+            $parts = explode("/", $requestUri);
+            //todo
+            print_r($parts);
+            print_r($parts);
+
+            //first part is an empty string.
+            $payload = Domain\Models\Value::from($parts[1])->get($parts[2]);
+
+            return Commands\Command::from($parts[array_key_last($parts)])->get($payload);
+        };
+
 
         $getParam = function ($parameterName) use ($requestUri) : string {
             $explodedParam = explode($parameterName . "/", $requestUri, 2);
@@ -63,12 +80,23 @@ class Api
         $restApiClient = IliasRestApiClient::new();
 
         switch (true) {
-            case str_contains($requestUri, 'publishData'):
+            case str_contains($requestUri, 'get'):
+                /*print_r(
+
+                );*/
+
+                $command = $getCommand($requestUri);
+                $this->publish($response)($this->service->{$command->name}($command));
+
+
+
+
+
                 //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/projection/courseList/parentIdOrId/81/projectionType/keyValueList/publishData
-                $this->service->publishData(
+                /*$this->service->publishData(
                     Formatter::from($getParam('projectionType'))->format(Projection::from($getParam('projection'))->byParentRefId($getParam('parentIdOrId'))),
                     Publisher::JSON_DATA_PUBLISHER->get($this->publish($response)),
-                );
+                );*/
                 break;
             case str_contains($requestUri, 'enrollClassMembers'):
                 //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/parentIdOrId/81/class/RS_22-25_B/enrollClassMembers

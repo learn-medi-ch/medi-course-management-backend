@@ -8,6 +8,7 @@ abstract class ValueInstance extends PrimitiveValue
 {
     public function __construct(
         Value|string $name,
+        Values\ValueType $type,
         public string|array|int $value,
     ) {
         if (is_object($name)) {
@@ -16,6 +17,7 @@ abstract class ValueInstance extends PrimitiveValue
 
         parent::__construct(
             $name,
+            $type->value,
             $value
         );
     }

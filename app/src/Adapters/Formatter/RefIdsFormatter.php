@@ -5,7 +5,7 @@ namespace Medi\CourseManagementBackend\Adapters\Formatter;
 use Medi\CourseManagementBackend\Core\Domain\Models\RefIds;
 use Medi\CourseManagementBackend\Core\Domain\Models\RefId;
 
-class RefIdArrayFormatter
+class RefIdsFormatter
 {
     public static function new()
     {

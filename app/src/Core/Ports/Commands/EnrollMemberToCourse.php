@@ -16,11 +16,11 @@ class EnrollMemberToCourse extends CommandInstance
 
     public function getUserId() : int
     {
-        return $this->properties->{Models\Value::USER_ID->value};
+        return $this->value->{Models\Value::USER_ID->value};
     }
 
     public function getRefId() : int
     {
-        return $this->properties->{Models\Value::REF_ID->value};
+        return $this->value->{Models\Value::REF_ID->value};
     }
 }

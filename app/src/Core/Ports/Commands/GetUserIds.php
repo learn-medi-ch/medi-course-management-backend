@@ -17,6 +17,6 @@ class GetUserIds extends CommandInstance
 
     public function getCustomUserFields() : array
     {
-        return $this->properties->{Models\Value::CUSTOM_USER_FIELDS->value};
+        return $this->value->{Models\Value::CUSTOM_USER_FIELDS->value};
     }
 }

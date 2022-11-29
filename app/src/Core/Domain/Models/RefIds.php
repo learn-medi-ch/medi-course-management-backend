@@ -10,6 +10,6 @@ class RefIds extends ValueInstance
      */
     public static function new(array $ids) : self
     {
-        return new self(Value::REF_IDS, $ids);
+        return new self(Value::REF_IDS,  Values\ValueType::ARRAY, $ids);
     }
 }

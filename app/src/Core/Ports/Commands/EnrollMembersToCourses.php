@@ -19,7 +19,7 @@ class EnrollMembersToCourses extends CommandInstance
      */
     public function getUserIds() :array
     {
-        return $this->properties->{Models\Value::USER_IDS->value};
+        return $this->value->{Models\Value::USER_IDS->value};
     }
 
     /**
@@ -27,6 +27,6 @@ class EnrollMembersToCourses extends CommandInstance
      */
     public function getRefIds() : array
     {
-        return $this->properties->{Models\Value::REF_IDS->value};
+        return $this->value->{Models\Value::REF_IDS->value};
     }
 }

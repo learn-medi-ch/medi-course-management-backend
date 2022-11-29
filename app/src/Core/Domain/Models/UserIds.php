@@ -12,6 +12,6 @@ class UserIds extends ValueInstance
      */
     public static function new(array $ids) : self
     {
-        return new self(Value::USER_IDS, $ids);
+        return new self(Value::USER_IDS, Values\ValueType::ARRAY, $ids);
     }
 }

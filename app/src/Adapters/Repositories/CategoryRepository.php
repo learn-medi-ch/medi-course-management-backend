@@ -6,18 +6,12 @@ use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
 use Medi\CourseManagementBackend\Core\Domain\Models\ObjectTitleList;
 use Medi\CourseManagementBackend\Core\Ports;
 
-use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Object\DefaultObjectType;
-use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Object\ObjectDto;
-use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\CourseMember\CourseMemberDiffDto;
-use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\CourseMember\CourseMemberDto;
-use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Role\RoleDto;
 
 use Medi\CourseManagementBackend\Adapters\Formatter;
-use stdClass;
-use Medi\CourseManagementBackend\Core\Domain\Models\ArrayValue;
 use Medi\CourseManagementBackend\Core\Domain\Models\RefIds;
+use stdClass;
 
-class CourseRepository implements Ports\CourseRepository
+class CategoryRepository implements Ports\CategoryRepository
 {
     private function __construct(private readonly IliasRestApiClient $iliasRestApiClient)
     {
@@ -33,19 +27,13 @@ class CourseRepository implements Ports\CourseRepository
 
         $obj = new stdClass();
         $obj->ref_id = 82;
-        $obj->title = "course1";
+        $obj->title = "category 1";
         return [$obj];
 
 
         //todo $deep;
-        //print_r($this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::COURSE));
+        //print_r($this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::CATEGORY));
         exit;
-    }
-
-    public function enrollToCourse(int $refId, int $userId) : void
-    {
-        $diff = CourseMemberDiffDto::new(true);
-        $this->iliasRestApiClient->addCourseMemberByRefIdByUserId($refId, $userId, $diff);
     }
 
     public function getRefIds(int $parentRefId) : RefIds

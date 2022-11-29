@@ -7,7 +7,6 @@ class CustomUserField extends ValueInstance
 {
     public static function new(string $name, string $value) : self
     {
-        return new self($name,
-            $value, []);
+        return new self($name,$value, []);
     }
 }

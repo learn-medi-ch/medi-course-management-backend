@@ -25,6 +25,52 @@ class CategoryRepository implements Ports\CategoryRepository
     public function getList(int $parentRefId, bool $deep = false) : array
     {
 
+        if($parentRefId === 119) {
+            $obj = new stdClass();
+            $obj->ref_id = 2924;
+            $obj->title = "AMB";
+            $objs[] = $obj;
+
+
+            $obj = new stdClass();
+            $obj->ref_id = 2964;
+            $obj->title = "AT";
+            $objs[] = $obj;
+
+
+
+            $obj = new stdClass();
+            $obj->ref_id = 2908;
+            $obj->title = "BMA";
+            $objs[] = $obj;
+
+
+            $obj = new stdClass();
+            $obj->ref_id = 2934;
+            $obj->title = "DH";
+            $objs[] = $obj;
+
+
+            $obj = new stdClass();
+            $obj->ref_id = 2943;
+            $obj->title = "MTR";
+            $objs[] = $obj;
+
+
+            $obj = new stdClass();
+            $obj->ref_id = 2953;
+            $obj->title = "OT";
+            $objs[] = $obj;
+
+
+            $obj = new stdClass();
+            $obj->ref_id = 617;
+            $obj->title = "RS";
+            $objs[] = $obj;
+
+            return $objs;
+        }
+
         $obj = new stdClass();
         $obj->ref_id = 82;
         $obj->title = "category 1";

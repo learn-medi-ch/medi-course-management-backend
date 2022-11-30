@@ -7,10 +7,11 @@ use Medi\CourseManagementBackend\Core\Domain;
 class Service
 {
     private function __construct(
-        private UserRepository $userRepository,
-        private CourseRepository $courseRepository,
+        private UserRepository     $userRepository,
+        private CourseRepository   $courseRepository,
         private CategoryRepository $categoryRepository
-    ) {
+    )
+    {
 
     }
 
@@ -24,22 +25,31 @@ class Service
         $publisher->handle(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 
-    public function getUserIds(Commands\GetUserIds $command) : Domain\Models\UserIds
+    public function getUserIds(Commands\GetUserIds $command): Domain\Models\UserIds
     {
         return $this->userRepository->getUserIds(Domain\Models\UserFilter::new($command->getCustomUserFields()));
     }
 
-    public function getCourseIds(Commands\GetCourseIds $command) : Domain\Models\RefIds
+    public function importUsers(Commands\ImportUsers $command): Domain\Models\BoolValue
     {
-        return $this->courseRepository->getRefIds();
+        foreach ($command->getUsers() as $user) {
+            $this->userRepository->createOrUpdateUser($user);
+        }
+
+        return Domain\Models\BoolValue::new(true);
     }
 
-    public function getCourseTitles(Commands\GetCourseTitles $command) : Domain\Models\ObjectTitleList
+    public function getCourseIds(Commands\GetCourseIds $command): Domain\Models\RefIds
+    {
+        return $this->courseRepository->getRefIds($command->getParentRefId());
+    }
+
+    public function getCourseTitles(Commands\GetCourseTitles $command): Domain\Models\ObjectTitleList
     {
         return $this->courseRepository->getTitles($command->getParentRefId());
     }
 
-    public function getCategoryTitles(Commands\GetCategoryTitles $command) : Domain\Models\ObjectTitleList
+    public function getCategoryTitles(Commands\GetCategoryTitles $command): Domain\Models\ObjectTitleList
     {
         return $this->categoryRepository->getTitles($command->getParentRefId());
     }
@@ -47,7 +57,7 @@ class Service
     /**
      * @throws \Exception
      */
-    public function enrollMembersToCourses(Commands\EnrollMembersToCourses $command) : object
+    public function enrollMembersToCourses(Commands\EnrollMembersToCourses $command): object
     {
         foreach ($command->getRefIds() as $refId) {
             foreach ($command->getUserIds() as $userId) {
@@ -65,7 +75,7 @@ class Service
         );
     }
 
-    public function enrollMemberToCourse(Commands\EnrollMemberToCourse $command) : object
+    public function enrollMemberToCourse(Commands\EnrollMemberToCourse $command): object
     {
         print_r($command);
 

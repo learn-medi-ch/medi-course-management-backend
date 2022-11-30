@@ -11,7 +11,7 @@ class UserFilter extends ObjectInstance
     public static function new(array $customUserFields) : UserFilter
     {
 
-        return new self(Value::USER_FILTER,
+        return new self(Value::USER_FILTER->value,
             $customUserFields);
     }
 }

@@ -9,4 +9,12 @@ interface UserRepository
     public function getUserIds(
         Models\UserFilter $filter
     ) : Models\UserIds;
+
+    /**
+     * @param  Models\User[] $users
+     * @return void
+     */
+    public function createOrUpdateUser(
+        Models\User $user
+    ) : void;
 }

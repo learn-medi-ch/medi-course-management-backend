@@ -1,7 +1,7 @@
 FROM fluxms/flux-eco-biotope:1.4.0 AS medi-course-management-backend
 USER root
 COPY --chown=www-data:www-data ./app /app
-#RUN (mkdir -p /app/libs/flux-ilias-rest-api-client && cd /app/libs/flux-ilias-rest-api-client && wget -O - https://github.com/fluxfw/flux-ilias-rest-api-client/releases/download/v2022-08-02-1/flux-ilias-rest-api-client-v2022-08-02-1-build.tar.gz | tar -xz --strip-components=1)
+RUN (mkdir -p /app/libs/flux-ilias-rest-api-client && cd /app/libs/flux-ilias-rest-api-client && wget -O - https://github.com/fluxfw/flux-ilias-rest-api-client/releases/download/v2022-08-02-1/flux-ilias-rest-api-client-v2022-08-02-1-build.tar.gz | tar -xz --strip-components=1)
 
 USER www-data
 WORKDIR /app

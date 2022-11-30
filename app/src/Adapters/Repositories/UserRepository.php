@@ -2,6 +2,7 @@
 
 namespace Medi\CourseManagementBackend\Adapters\Repositories;
 
+use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\User\UserDiffDto;
 use Medi\CourseManagementBackend\Core\Ports;
 use Medi\CourseManagementBackend\Core\Domain\Models;
 use Medi\CourseManagementBackend\Adapters\Formatter;
@@ -21,10 +22,11 @@ class UserRepository implements Ports\UserRepository
 
     public function getList(Models\UserFilter $filter) : array
     {
+
         //
-        $users[] = UserDto::new(43);
+        /*$users[] = UserDto::new(43);
         $users[] = UserDto::new(5);
-        return $users;
+        return $users;*/
         //
 
         $users = $this->iliasRestApiClient->getUsers(
@@ -39,14 +41,14 @@ class UserRepository implements Ports\UserRepository
         );
 
         $filtered = [];
-        if ($filter->getCustomUserFields()->hasProperties() === true) {
+        if ($filter->hasProperties() === true) {
 
             //todo
             foreach ($users as $user) {
                 if (count($user->user_defined_fields) > 0) {
                     foreach ($user->user_defined_fields as $defined_field) {
                         $satisfiesAllFilter = false;
-                        foreach ($filter->getCustomUserFields()->getProperties() as $keyValue) {
+                        foreach ($filter->getValue() as $keyValue) {
                             if ($defined_field->name === $keyValue->key && $defined_field->value === $keyValue->value) {
                                 $satisfiesAllFilter = true;
                             } else {
@@ -72,5 +74,11 @@ class UserRepository implements Ports\UserRepository
     public function getUserIds(Models\UserFilter $filter) : Models\UserIds
     {
         return Formatter\UserIdsFormatter::new()->format($this->getList($filter));
+    }
+
+    public function createOrUpdateUser(Models\User $user): void
+    {
+        //todo
+        $this->iliasRestApiClient->createUser(UserDiffDto::new('ddd'));
     }
 }

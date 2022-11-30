@@ -8,7 +8,8 @@ abstract class PrimitiveValue implements Value
     public function __construct(
         public string $name,
         public string $type,
-        public string|array|int $value
+        public string|array|int|bool $value
+
     ) {
 
     }

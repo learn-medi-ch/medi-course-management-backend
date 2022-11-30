@@ -34,7 +34,7 @@ class Api
         );
     }
 
-    public static function new() : self
+    public static function new(): self
     {
         return new self();
     }
@@ -42,30 +42,19 @@ class Api
     /**
      * @throws \Exception
      */
-    final public function handleHttpRequest(Http\Request $request, Http\Response $response) : void
+    final public function handleHttpRequest(Http\Request $request, Http\Response $response): void
     {
         $requestUri = $request->server['request_uri'];
 
-        if($request->rawContent()) {
-            $payload = json_decode($request->rawContent());
-            $process = Process::fromPayload($payload);
-            $this->process($process, $this->publish($response));
-        }
-
-        $getCommand = function($requestUri) {
+        $getCommand = function ($requestUri) {
             $parts = explode("/", $requestUri);
-            //todo
-            print_r($parts);
-            print_r($parts);
-
             //first part is an empty string.
             $payload = Domain\Models\Value::from($parts[1])->get($parts[2]);
-
             return Commands\Command::from($parts[array_key_last($parts)])->get($payload);
         };
 
 
-        $getParam = function ($parameterName) use ($requestUri) : string {
+        $getParam = function ($parameterName) use ($requestUri): string {
             $explodedParam = explode($parameterName . "/", $requestUri, 2);
             if (count($explodedParam) === 2) {
                 $explodedParts = explode("/", $explodedParam[1], 2);
@@ -77,6 +66,22 @@ class Api
             return "";
         };
 
+        //postRequest
+        if ($request->rawContent()) {
+            $payload = json_decode($request->rawContent());
+            $process = Process::fromPayload($payload);
+            $this->process($process, $this->publish($response));
+        }
+
+        //handleProcessRequest
+        if (str_contains($requestUri, 'handle')) {
+            $process = $getParam('process');
+            require_once __DIR__ . "/../../../definitions/processes/" . $process . ".php";
+
+            $this->publish($response)(Domain\Models\BoolValue::new(true));
+        }
+
+
         $restApiClient = IliasRestApiClient::new();
 
         switch (true) {
@@ -87,9 +92,6 @@ class Api
 
                 $command = $getCommand($requestUri);
                 $this->publish($response)($this->service->{$command->name}($command));
-
-
-
 
 
                 //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/projection/courseList/parentIdOrId/81/projectionType/keyValueList/publishData
@@ -120,7 +122,7 @@ class Api
 
     /**
      * @param Commands\CommandInstance[] $commands
-     * @param callable                   $next
+     * @param callable $next
      * @return void
      */
     private function handle(array $commands, callable $onNext)
@@ -132,7 +134,7 @@ class Api
         $onNext($results);
     }
 
-    public function process(Process $process, callable $onPublish)
+    public function process(Process $process, ?callable $onPublish = null)
     {
         if ($process->next !== null) {
             $nextProcess = $process->next;
@@ -148,7 +150,9 @@ class Api
             };
         } else {
             $onNext = function (array $result) use ($onPublish) {
-                $onPublish(Processed::new($result));
+                if ($onPublish !== null) {
+                    $onPublish(Processed::new($result));
+                }
             };
         }
 

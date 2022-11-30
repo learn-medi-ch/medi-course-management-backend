@@ -1,5 +1,5 @@
 /*
-app/libs
+app/flux-ilias-rest-api-client/libs
 !.gitignore
 !app
 !docker_build

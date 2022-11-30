@@ -10,6 +10,6 @@ class ObjectTitleList extends ValueInstance
      */
     public static function new(array $objectTitles): self
     {
-        return new self(Value::OBJECT_TITLES, Values\ValueType::ARRAY, $objectTitles);
+        return new self(Value::OBJECT_TITLE_LIST, Values\ValueType::ARRAY, $objectTitles);
     }
 }

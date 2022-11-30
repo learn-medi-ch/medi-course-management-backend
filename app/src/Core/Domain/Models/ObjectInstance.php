@@ -13,11 +13,11 @@ abstract class ObjectInstance extends ObjectValue
      * @param PrimitiveValue[]|ObjectValue[] $values
      */
     public function __construct(
-        Value $name,
+        string $name,
        array $values,
     ) {
         parent::__construct(
-            $name->value,
+            $name,
             $values
         );
     }

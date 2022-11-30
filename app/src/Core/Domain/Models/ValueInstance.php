@@ -9,7 +9,7 @@ abstract class ValueInstance extends PrimitiveValue
     public function __construct(
         Value|string $name,
         Values\ValueType $type,
-        public string|array|int $value,
+        public string|array|int|bool $value,
     ) {
         if (is_object($name)) {
             $name = $name->value;

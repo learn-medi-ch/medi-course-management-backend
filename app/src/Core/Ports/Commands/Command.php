@@ -7,6 +7,7 @@ use Medi\CourseManagementBackend\Core\Domain\Models\Value;
 enum Command: string
 {
     case GET_USER_IDS = 'getUserIds';
+    case IMPORT_USERS = 'importUsers';
     case GET_COURSE_IDS = 'getCourseIds';
     case GET_COURSE_TITLES = 'getCourseTitles';
     case GET_CATEGORY_TITLES = 'getCategoryTitles';
@@ -17,6 +18,7 @@ enum Command: string
     {
         return match ($this) {
             self::GET_USER_IDS => GetUserIds::new(...$this->getValues((array)$payload)),
+            self::IMPORT_USERS => ImportUsers::new(),
             self::GET_COURSE_IDS => GetCourseIds::new($payload),
             self::GET_COURSE_TITLES => GetCourseTitles::new($payload),
             self::GET_CATEGORY_TITLES => GetCategoryTitles::new($payload),

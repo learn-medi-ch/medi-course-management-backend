@@ -19,7 +19,7 @@ class GetCourseIds extends CommandInstance
     /**
      * @return Models\ParentRefId
      */
-    public function getParentRefId(): Models\ParentRefId
+    public function getParentRefId(): int
     {
         return $this->value->{Models\Value::PARENT_REF_ID->value};
     }

@@ -14,7 +14,6 @@ use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Role\RoleDto;
 
 use Medi\CourseManagementBackend\Adapters\Formatter;
 use stdClass;
-use Medi\CourseManagementBackend\Core\Domain\Models\ArrayValue;
 use Medi\CourseManagementBackend\Core\Domain\Models\RefIds;
 
 class CourseRepository implements Ports\CourseRepository
@@ -31,15 +30,16 @@ class CourseRepository implements Ports\CourseRepository
     public function getList(int $parentRefId, bool $deep = false) : array
     {
 
+        $objs = [];
+
         $obj = new stdClass();
         $obj->ref_id = 82;
         $obj->title = "course1";
         return [$obj];
 
-
+        // $this->iliasRestApiClient->getChildrenByRefId($parentRefId)); exit;
         //todo $deep;
-        //print_r($this->iliasRestApiClient->getChildrenByRefId($parentRefId, DefaultObjectType::COURSE));
-        exit;
+        //return $this->iliasRestApiClient->getCourses();
     }
 
     public function enrollToCourse(int $refId, int $userId) : void

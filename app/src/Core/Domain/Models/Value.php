@@ -4,6 +4,7 @@ namespace Medi\CourseManagementBackend\Core\Domain\Models;
 
 enum Value: string
 {
+    case PARAMS = 'params';
     case BoolValue = 'boolValue';
     case USER_IDS = 'userIds';
     case USER_ID = 'userId';
@@ -12,6 +13,7 @@ enum Value: string
     case REF_ID = 'refId';
     case PARENT_REF_ID = 'parentRefId';
     case TITLE = 'title';
+    case INSTITUTION = 'institution';
     case OBJECT_TITLE = 'objectTitle';
     case OBJECT_TITLE_LIST = 'objectTitleList';
     case USER = 'user';
@@ -35,4 +37,6 @@ enum Value: string
             self::OBJECT_TITLE_LIST => ObjectTitleList::new($payload),
         };
     }
+
+
 }

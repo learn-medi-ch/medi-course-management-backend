@@ -7,8 +7,8 @@ require_once __DIR__ . '/../../../flux-ilias-rest-api-client/src/Adapter/Api/Ili
 require_once __DIR__ . '/../../../flux-ilias-rest-api-client/src/Adapter/Api/IliasRestApiClientConfigDto.php';
 
 use Medi\CourseManagementBackend\Core\Ports;
+use ProcessHandler;
 use Swoole\Http;
-use Medi\CourseManagementBackend\Adapters\Formatter\Formatter;
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
 use Medi\CourseManagementBackend\Core\Ports\Commands;
 use Medi\CourseManagementBackend\Core\Domain;
@@ -75,50 +75,27 @@ class Api
 
         //handleProcessRequest
         if (str_contains($requestUri, 'handle')) {
+            require_once __DIR__ . "/../../../definitions/processes/ProcessHandler.php";
+
             $process = $getParam('process'); //todo enum
-            $institution = $getParam('institution');
-            require_once __DIR__ . "/../../../definitions/processes/" . $process . ".php";
+
+            $value = Domain\Models\Institution::new($getParam('institution')); //todo from ValueEnum
+
+            $params = Domain\Models\Params::new([$value]);
+
+            ProcessHandler::from($process)->process($params);
+
 
             $this->publish($response)(Domain\Models\BoolValue::new(true));
         }
 
-
-        $restApiClient = IliasRestApiClient::new();
-
+        //queries
         switch (true) {
             case str_contains($requestUri, 'get'):
-                /*print_r(
-
-                );*/
-
                 $command = $getCommand($requestUri);
                 $this->publish($response)($this->service->{$command->name}($command));
-
-
-                //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/projection/courseList/parentIdOrId/81/projectionType/keyValueList/publishData
-                /*$this->service->publishData(
-                    Formatter::from($getParam('projectionType'))->format(Projection::from($getParam('projection'))->byParentRefId($getParam('parentIdOrId'))),
-                    Publisher::JSON_DATA_PUBLISHER->get($this->publish($response)),
-                );*/
-                break;
-            case str_contains($requestUri, 'enrollClassMembers'):
-                //example request_uri: http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/parentIdOrId/81/class/RS_22-25_B/enrollClassMembers
-                $this->service->enrollMembers(
-                    Formatter::OBJ_ID_ARRAY->format(Projection::USER_LIST->byFieldValue("Klasse", $getParam('class'))),
-                    Formatter::REF_ID_ARRAY->format(Projection::COURSE_LIST->byParentRefId($getParam('parentIdOrId'))),
-                    Process::ENROLL_TO_COURSE->get($restApiClient),
-                    Publisher::JSON_DATA_PUBLISHER->get($this->publish($response))
-                );
                 break;
         }
-
-        /**
-         *   $addressParts = explode("/",$address);
-         * $operationName = end($addressParts);
-         * $payloadObject = json_decode($payload);
-         * $payloadObject = $this->hydratePayload($address,$operationName, $payloadObject);
-         */
-
     }
 
     /**

@@ -1,22 +1,20 @@
 <?php
-require_once __DIR__ . '/../../../autoload.php';
-require __DIR__ . '/../../../libs/SimpleXLSX.php';
 require_once __DIR__ . '/ImportUserFieldMapping.php';
 require_once __DIR__ . '/ImportUserMapping.php';
 
 use Medi\CourseManagementBackend\Adapters\Api\Api;
 use Medi\CourseManagementBackend\Adapters\Api\Process;
-use Medi\CourseManagementBackend\Core\Domain\Models\UserList;
+use Medi\CourseManagementBackend\Core\Domain\Models;
 use Medi\CourseManagementBackend\Core\Ports;
 use Shuchkin\SimpleXLSX;
 
 class ImportUsers {
 
-    public static function process(string $institution) {
+    public static function process(Models\Institution|Models\ValueInstance $institution) {
         $publish = function (object $event) {
             print_r($event);
         };
-        $getUsersFromExcel = function ($institution): UserList {
+        $getUsersFromExcel = function ($institution): Models\UserList {
             $users = [];
             if ($xlsx = SimpleXLSX::parse(__DIR__ . "/../../data/".ImportUserFileName::from($institution)->value)) {
                 foreach ($xlsx->rows() as $row) {
@@ -25,7 +23,7 @@ class ImportUsers {
             } else {
                 echo SimpleXLSX::parseError();
             }
-            return UserList::new($users);
+            return Models\UserList::new($users);
         };
 
 

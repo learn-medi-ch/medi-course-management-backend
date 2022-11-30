@@ -3,7 +3,7 @@
 namespace Medi\CourseManagementBackend\Core\Ports\Commands;
 use Medi\CourseManagementBackend\Core\Domain\Models;
 
-class EnrollMemberToCourse extends CommandInstance
+class EnrollUserToCourseAsMember extends CommandInstance
 {
     public static function new(
         Models\RefId $refId, Models\UserId $userId

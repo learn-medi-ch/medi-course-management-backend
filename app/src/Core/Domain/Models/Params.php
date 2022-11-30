@@ -2,8 +2,6 @@
 
 namespace Medi\CourseManagementBackend\Core\Domain\Models;
 
-use Medi\CourseManagementBackend\Core\Domain\Models\Values\ValueType;
-
 class Params extends ObjectInstance
 {
     /**

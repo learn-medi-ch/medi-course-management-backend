@@ -57,11 +57,11 @@ class Service
     /**
      * @throws \Exception
      */
-    public function enrollMembersToCourses(Commands\EnrollMembersToCourses $command): object
+    public function enrollMembersToCourses(Commands\EnrollUsersToCourse $command): object
     {
         foreach ($command->getRefIds() as $refId) {
             foreach ($command->getUserIds() as $userId) {
-                $this->enrollMemberToCourse(Commands\EnrollMemberToCourse::new(
+                $this->enrollMemberToCourse(Commands\EnrollUserToCourseAsMember::new(
                     $refId,
                     $userId
                 )
@@ -75,7 +75,7 @@ class Service
         );
     }
 
-    public function enrollMemberToCourse(Commands\EnrollMemberToCourse $command): object
+    public function enrollMemberToCourse(Commands\EnrollUserToCourseAsMember $command): object
     {
         print_r($command);
 

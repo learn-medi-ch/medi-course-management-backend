@@ -26,7 +26,7 @@ $api->process(
         ],
         Process::new(
             [
-                Ports\Commands\EnrollMembersToCourses::new(
+                Ports\Commands\EnrollUsersToCourse::new(
                     Models\RefIds::new(
                         []
                     ),

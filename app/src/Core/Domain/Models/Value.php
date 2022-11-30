@@ -23,6 +23,7 @@ enum Value: string
     case USER_FIELD = 'userField';
     case USER_FIELD_LIST = 'userFieldList';
     case USER_FILTER = 'userFilter';
+    case COURSE_ROLE_TYPE = 'courseRoleType';
 
     public function get(array|int|string|object $payload)
     {
@@ -35,6 +36,7 @@ enum Value: string
             self::TITLE => Title::new((string)$payload),
             self::OBJECT_TITLE => ObjectTitle::new(...$payload),
             self::OBJECT_TITLE_LIST => ObjectTitleList::new($payload),
+            self::COURSE_ROLE_TYPE => CourseRoleType::from($payload)
         };
     }
 

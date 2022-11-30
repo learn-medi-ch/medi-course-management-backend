@@ -10,7 +10,7 @@ use Shuchkin\SimpleXLSX;
 
 class ImportUsers {
 
-    public static function process(Models\Institution|Models\ValueInstance $institution) {
+    public static function process(Models\Institution $institution) {
         $publish = function (object $event) {
             print_r($event);
         };

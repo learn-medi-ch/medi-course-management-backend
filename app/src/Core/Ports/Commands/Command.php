@@ -13,6 +13,7 @@ enum Command: string
     case GET_CATEGORY_TITLES = 'getCategoryTitles';
     case ENROLL_MEMBER_TO_COURSE = 'enrollMemberToCourse';
     case ENROLL_MEMBERS_TO_COURSES = 'enrollMembersToCourses';
+    case ENROLL_USERS_TO_COURSE = 'enrollUsersToCourse';
 
     public function get(object $payload = null)
     {
@@ -22,7 +23,8 @@ enum Command: string
             self::GET_COURSE_IDS => GetCourseIds::new($payload),
             self::GET_COURSE_TITLES => GetCourseTitles::new($payload),
             self::GET_CATEGORY_TITLES => GetCategoryTitles::new($payload),
-            self::ENROLL_MEMBERS_TO_COURSES => EnrollMembersToCourses::new(...$this->getValues((array)$payload)),
+           // self::ENROLL_MEMBERS_TO_COURSES => EnrollUserToCourse::new(...$this->getValues((array)$payload)),
+            self::ENROLL_USERS_TO_COURSE => EnrollUsersToCourse::new(...$this->getValues((array)$payload)),
         };
     }
 

@@ -3,7 +3,7 @@
 namespace Medi\CourseManagementBackend\Core\Domain\Events;
 
 use Medi\CourseManagementBackend\Core\Domain\Models\Value;
-use Medi\CourseManagementBackend\Core\Ports\Commands\EnrollMembersToCourses;
+use Medi\CourseManagementBackend\Core\Ports\Commands\EnrollUsersToCourse;
 
 enum Event: string
 {
@@ -13,7 +13,7 @@ enum Event: string
     public function get(object $payload = null)
     {
         return match ($this) {
-            self::MEMBERS_ENROLLED_TO_COURSES => EnrollMembersToCourses::new(...$this->getValues((array) $payload)),
+            self::MEMBERS_ENROLLED_TO_COURSES => EnrollUsersToCourse::new(...$this->getValues((array) $payload)),
             self::MEMBER_ENROLLED_TO_COURSE => GetCourseIds::new(...$this->getValues((array) $payload)),
         };
     }

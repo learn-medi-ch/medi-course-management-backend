@@ -11,30 +11,35 @@ use Medi\CourseManagementBackend\Adapters\Api\Api;
 use Medi\CourseManagementBackend\Core\Ports;
 use Medi\CourseManagementBackend\Adapters\Api\Process;
 
-$publish = function (object $event) {
-    print_r($event);
-};
+class ImportUsers {
 
-$getUsersFromExcel = function (): UserList {
-    $users = [];
-    if ($xlsx = SimpleXLSX::parse(__DIR__ . "/../../data/Demo-BMA.xlsx")) {
-        foreach ($xlsx->rows() as $row) {
-            $users[] = ImportUserMapping::fromRow($row);
-        }
-    } else {
-        echo SimpleXLSX::parseError();
+    public static function process(string $institution) {
+        $publish = function (object $event) {
+            print_r($event);
+        };
+        $getUsersFromExcel = function ($institution): UserList {
+            $users = [];
+            if ($xlsx = SimpleXLSX::parse(__DIR__ . "/../../data/".ImportUserFileName::from($institution)->value)) {
+                foreach ($xlsx->rows() as $row) {
+                    $users[] = ImportUserMapping::fromRow($row);
+                }
+            } else {
+                echo SimpleXLSX::parseError();
+            }
+            return UserList::new($users);
+        };
+
+
+        $api = Api::new();
+        $api->process(
+            Process::new([
+                    Ports\Commands\ImportUsers::new(
+                        $getUsersFromExcel($institution)
+                    )
+                ]
+            ),
+            $publish
+        );
     }
-    return UserList::new($users);
-};
 
-
-$api = Api::new();
-$api->process(
-    Process::new([
-            Ports\Commands\ImportUsers::new(
-                $getUsersFromExcel()
-            )
-        ]
-    ),
-    $publish
-);
+}

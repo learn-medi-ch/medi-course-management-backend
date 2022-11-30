@@ -75,7 +75,8 @@ class Api
 
         //handleProcessRequest
         if (str_contains($requestUri, 'handle')) {
-            $process = $getParam('process');
+            $process = $getParam('process'); //todo enum
+            $institution = $getParam('institution');
             require_once __DIR__ . "/../../../definitions/processes/" . $process . ".php";
 
             $this->publish($response)(Domain\Models\BoolValue::new(true));

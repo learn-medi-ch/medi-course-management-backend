@@ -1,15 +1,14 @@
 <?php
-require_once __DIR__ . '/../../autoload.php';
-require __DIR__ . '/../../libs/SimpleXLSX.php';
+require_once __DIR__ . '/../../../autoload.php';
+require __DIR__ . '/../../../libs/SimpleXLSX.php';
 require_once __DIR__ . '/ImportUserFieldMapping.php';
 require_once __DIR__ . '/ImportUserMapping.php';
 
-use Medi\CourseManagementBackend\Core\Domain\Models\UserList;
-use Shuchkin\SimpleXLSX;
-
 use Medi\CourseManagementBackend\Adapters\Api\Api;
-use Medi\CourseManagementBackend\Core\Ports;
 use Medi\CourseManagementBackend\Adapters\Api\Process;
+use Medi\CourseManagementBackend\Core\Domain\Models\UserList;
+use Medi\CourseManagementBackend\Core\Ports;
+use Shuchkin\SimpleXLSX;
 
 class ImportUsers {
 

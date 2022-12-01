@@ -29,17 +29,8 @@ class CourseRepository implements Ports\CourseRepository
 
     public function getList(int $parentRefId, bool $deep = false) : array
     {
-
-        $objs = [];
-
-        $obj = new stdClass();
-        $obj->ref_id = 82;
-        $obj->title = "course1";
-        return [$obj];
-
-        // $this->iliasRestApiClient->getChildrenByRefId($parentRefId)); exit;
-        //todo $deep;
-        //return $this->iliasRestApiClient->getCourses();
+        //e.g. http://127.0.0.11/flux-ilias-rest-api-proxy/crsmgmt-backend/parentRefId/81/getCourseIds
+        return $this->iliasRestApiClient->getChildrenByRefId($parentRefId);
     }
 
     public function enrollToCourse(int $refId, int $userId) : void

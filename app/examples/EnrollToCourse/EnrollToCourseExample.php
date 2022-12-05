@@ -13,7 +13,7 @@ $api = Api::new();
 $api->process(
     \Medi\CourseManagementBackend\Adapters\Api\Process::new([
             Ports\Commands\GetUserIds::new(
-                Models\UserCustomFieldList::new(
+                Models\CustomFields::new(
                     [Models\UserCustomField::new('Klasse', 'test')]
                 )
                 ),

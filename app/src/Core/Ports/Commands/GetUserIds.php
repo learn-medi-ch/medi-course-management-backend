@@ -7,7 +7,7 @@ use Medi\CourseManagementBackend\Core\Domain\Models;
 class GetUserIds extends CommandInstance
 {
     public static function new(
-        Models\UserCustomFieldList $customUserFields
+        Models\CustomFields $customUserFields
     ) : self {
         return new self(
             Command::GET_USER_IDS,

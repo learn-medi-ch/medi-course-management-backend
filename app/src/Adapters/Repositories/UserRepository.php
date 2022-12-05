@@ -4,10 +4,12 @@ namespace Medi\CourseManagementBackend\Adapters\Repositories;
 
 use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\User\UserDiffDto;
 use Medi\CourseManagementBackend\Core\Ports;
+use Medi\CourseManagementBackend\Core\Domain\ValueObjects;
 use Medi\CourseManagementBackend\Core\Domain\Models;
 use Medi\CourseManagementBackend\Adapters\Formatter;
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
 use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\User\UserDto;
+use Medi\CourseManagementBackend\Core\Ports\Processes\ImportUsers\UserFieldType;
 
 class UserRepository implements Ports\UserRepository
 {
@@ -20,7 +22,7 @@ class UserRepository implements Ports\UserRepository
         return new self($iliasRestApiClient);
     }
 
-    public function getList(Models\UserFilter $filter) : array
+    public function getList(Models\UserFilter $filter): array
     {
 
         //
@@ -71,14 +73,33 @@ class UserRepository implements Ports\UserRepository
      * @param Models\UserFilter $filter
      * @return Models\UserIds
      */
-    public function getUserIds(Models\UserFilter $filter) : Models\UserIds
+    public function getUserIds(Models\UserFilter $filter): Models\UserIds
     {
         return Formatter\UserIdsFormatter::new()->format($this->getList($filter));
     }
 
-    public function createOrUpdateUser(Models\User $user): void
+    public function createOrUpdateUser(ValueObjects\User $user): void
     {
-        //todo
-        $this->iliasRestApiClient->createUser(UserDiffDto::new('ddd'));
+        $users = $this->iliasRestApiClient->getUsers(null, null, null, $user->customFields->get(UserFieldType::ADDRESS_NR->value));
+        if (count($users) > 0) {
+            foreach ($users as $userDto) {
+                $this->updateUser($user);
+            }
+        } else {
+            $this->createUser($user);
+        }
+
+    }
+
+    public function updateUser(ValueObjects\User $user): void
+    {
+        $userDiff = UserAdapter::fromUserValueObject($user)->toUserDiffDto();
+        $this->iliasRestApiClient->updateUserByImportId($user->customFields->get(UserFieldType::ADDRESS_NR->value),$userDiff);
+    }
+
+    public function createUser(ValueObjects\User $user): void
+    {
+        $userDiff = UserAdapter::fromUserValueObject($user)->toUserDiffDto();
+        $this->iliasRestApiClient->createUser($userDiff);
     }
 }

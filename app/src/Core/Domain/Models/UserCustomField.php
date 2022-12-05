@@ -2,13 +2,17 @@
 
 namespace Medi\CourseManagementBackend\Core\Domain\Models;
 
-
-use Medi\CourseManagementBackend\Core\Domain\Models\Values\ValueType;
-
-class UserCustomField extends ValueInstance
+class UserCustomField
 {
-    public static function new(string $name, string $value) : self
+    private function __construct(
+        public string $name, public string $value
+    )
     {
-        return new self($name,Values\ValueType::STRING, $value);
+
+    }
+
+    public static function new(string $name, string $value): self
+    {
+        return new self($name, $value);
     }
 }

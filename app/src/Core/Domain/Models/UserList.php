@@ -13,7 +13,8 @@ class UserList extends ValueInstance
      */
     public static function new(array $users) : self
     {
-        return new self(Value::USER_LIST->value,
+        return new self(
+            Value::USER_LIST->value,
             ValueType::ARRAY,
             $users);
     }

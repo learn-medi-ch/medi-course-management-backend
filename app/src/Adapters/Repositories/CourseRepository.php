@@ -3,6 +3,8 @@
 namespace Medi\CourseManagementBackend\Adapters\Repositories;
 
 use FluxIliasRestApiClient\Adapter\Api\IliasRestApiClient;
+use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Course\CourseDiffDto;
+use FluxIliasRestApiClient\Libs\FluxIliasBaseApi\Adapter\Course\CourseDto;
 use Medi\CourseManagementBackend\Core\Domain\Models\ObjectTitleList;
 use Medi\CourseManagementBackend\Core\Ports;
 
@@ -47,5 +49,15 @@ class CourseRepository implements Ports\CourseRepository
     public function getTitles(int $parentRefId): ObjectTitleList
     {
         return Formatter\ObjectTitleListFormatter::new()->format($this->getList($parentRefId));
+    }
+
+    public function createCourse(int $parentRefId) : void
+    {
+
+        $courses = $this->iliasRestApiClient->getChildrenByRefId(84);
+        foreach($courses as $course) {
+            $this->iliasRestApiClient->addCourseMemberByIdByUserId( $course->id,  1563, CourseMemberDiffDto::new(true));
+        }
+
     }
 }

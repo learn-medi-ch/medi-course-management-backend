@@ -18,7 +18,7 @@ class EnrollToComittee {
         $api->process(
             Process::new([
                     Ports\Commands\GetUserIds::new(
-                        Models\UserCustomFieldList::new([$customField])
+                        Models\CustomFields::new([$customField])
                     )
                 ],
                 Process::new(

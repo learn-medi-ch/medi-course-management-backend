@@ -1,5 +1,7 @@
 <?php
 
+namespace Medi\CourseManagementBackend\Core\Ports\Processes\ImportUsers;
+
 enum ImportUserFileName: string
 {
     case BMA = 'Benutzerexport-SSO-BMA.xlsx';

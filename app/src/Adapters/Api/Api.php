@@ -81,9 +81,9 @@ class Api
 
             $value = Domain\Models\Institution::new($getParam('institution')); //todo from ValueEnum
 
-            $params = Domain\Models\Params::new([$value]);
+            //$params = Domain\Models\Params::new([$value->value]);
 
-            ProcessHandler::from($process)->process($params);
+            ProcessHandler::from($process)->process();
 
 
             $this->publish($response)(Domain\Models\BoolValue::new(true));

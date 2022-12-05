@@ -12,10 +12,12 @@ enum ProcessHandler: string
 {
     case IMPORT_USERS = 'ImportUsers';
 
-    public function process(Models\Params $params)
+    //Models\Params $params
+    public function process()
     {
         match ($this) {
-            self::IMPORT_USERS => ImportUsers::process($params->{Models\Value::INSTITUTION->value})
+            //$params->{Models\Value::INSTITUTION->value}
+            self::IMPORT_USERS => ImportUsers::process()
         };
     }
 }

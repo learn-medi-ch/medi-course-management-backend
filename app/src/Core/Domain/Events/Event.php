@@ -4,6 +4,7 @@ namespace Medi\CourseManagementBackend\Core\Domain\Events;
 
 use Medi\CourseManagementBackend\Core\Domain\Models\Value;
 use Medi\CourseManagementBackend\Core\Ports\Commands\EnrollUsersToCourse;
+use Medi\CourseManagementBackend\Core\Ports\Commands\GetCourseIds;
 
 enum Event: string
 {

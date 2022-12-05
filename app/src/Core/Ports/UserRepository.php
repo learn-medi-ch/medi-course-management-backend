@@ -3,6 +3,7 @@
 namespace Medi\CourseManagementBackend\Core\Ports;
 
 use Medi\CourseManagementBackend\Core\Domain\Models;
+use Medi\CourseManagementBackend\Core\Domain\ValueObjects;
 
 interface UserRepository
 {
@@ -11,10 +12,10 @@ interface UserRepository
     ) : Models\UserIds;
 
     /**
-     * @param  Models\User[] $users
+     * @param  ValueObjects\User $user
      * @return void
      */
     public function createOrUpdateUser(
-        Models\User $user
+        ValueObjects\User  $user
     ) : void;
 }

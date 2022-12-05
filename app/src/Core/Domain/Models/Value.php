@@ -28,7 +28,7 @@ enum Value: string
     public function get(array|int|string|object $payload)
     {
         return match ($this) {
-            self::USER_CUSTOM_FIELD_LIST => UserCustomFieldList::new($payload),
+            self::USER_CUSTOM_FIELD_LIST => CustomFields::new($payload),
             self::REF_IDS => RefIds::new($payload),
             self::USER_IDS => UserIds::new($payload),
             self::REF_ID => RefId::new((int)$payload),

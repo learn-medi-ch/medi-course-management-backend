@@ -9,7 +9,7 @@
       },
       "policies": {
         "authenticatedUsersOnly": {
-          "path": "/api",
+          "path": "/api/test",
           "allowedHeaders": "${SERVER_REQUIRED_HEADERS}",
           "allowedIps": "${SERVER_ALLOWED_IPS}"
         }

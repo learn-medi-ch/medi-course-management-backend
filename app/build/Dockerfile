@@ -11,8 +11,6 @@ COPY --from=build /build /opt/
 
 RUN chown -R node:node /opt/medi-course-management-backend
 RUN chmod +x /opt/medi-course-management-backend/app/docker-entrypoint.sh
-RUN /opt/medi-course-management-backend/app/docker-entrypoint.sh
-
 
 USER node:node
 

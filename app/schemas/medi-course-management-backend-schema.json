@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://fluxlabs.ch/medi-course-management-backend",
+  "allOf": [
+    {
+      "$ref": "../../../flux-eco/schemas/flux-eco-app-config-schema.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "const": "medi-course-management-backend"
+    },
+    "inboundsConfig": {
+      "httpBindingConfig": {
+        "$ref": "../../../flux-eco/schemas/binding-schemas/http-schemas/flux-eco-http-binding-config-schema.json"
+      }
+    },
+    "apiConfig": {
+      "$ref": "medi-course-management-backend-api-schema.json"
+    },
+    "outboundsConfigs": {
+      "type": "object",
+      "properties": {
+        "iliasDatabase": {
+          "type": "object",
+          "properties": {
+            "server": {
+              "$ref": "../../../flux-eco-query-actions/app/schemas/flux-eco-query-actions-schema.json#/$defs/server"
+            },
+            "boundActions": {
+              "type": "object",
+              "properties": {
+                "getRepositoryTree": {
+                  "$ref": "../../../flux-eco-query-actions/app/schemas/flux-eco-query-actions-schema.json#/$defs/actions/queryMysqlDataSource"
+                }
+              },
+              "required": [
+                "getRepositoryTree"
+              ]
+            }
+          }
+        }
+      },
+      "required": ["iliasDatabase"]
+    }
+  }
+}

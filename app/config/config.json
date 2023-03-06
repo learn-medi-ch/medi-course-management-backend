@@ -1,0 +1,89 @@
+{
+  "$schema": "../schemas/medi-course-management-backend-schema.json",
+  "name": "medi-course-management-backend",
+  "inboundsConfig": {
+    "httpBindingConfig": {
+      "server": {
+        "port": "${SERVER_PORT}",
+        "host": "${SERVER_HOST}"
+      },
+      "policies": {
+        "authenticatedUsersOnly": {
+          "path": "/api",
+          "allowedHeaders": "${SERVER_REQUIRED_HEADERS}",
+          "allowedIps": "${SERVER_ALLOWED_IPS}"
+        }
+      },
+      "routes": {
+        "api": {
+          "/api/{pageName}/readPageStructure": {
+            "contentType": "application/json",
+            "parameterNames": [
+              "pageName"
+            ],
+            "actionName": "readPageStructure",
+            "actionType": "requestHandler"
+          }
+        }
+      },
+      "staticFilesPath": null
+    }
+  },
+  "apiConfig": {
+    "outbounds": {
+      "queryHandler": {
+        "actionName": "handle",
+        "parametersMapping": {
+        }
+      }
+    }
+  },
+  "outboundsConfigs": {
+    "iliasDatabase": {
+      "server": {
+        "port": "${DATABASE_PORT}",
+        "host": "${DATABASE_HOST}",
+        "database": "${DATABASE_DATABASE}",
+        "password": "${DATABASE_PASSWORD}",
+        "user": "${DATABASE_USER}"
+      },
+      "boundActions": {
+        "getRepositoryTree": {
+          "actionName": "queryMysqlDataSource",
+          "actionParameters": {
+            "tableName": "object_data",
+            "joins": [
+              {
+                "tableName": "object_reference",
+                "type": "INNER JOIN",
+                "condition": {
+                  "leftTableField": "object_data.obj_id",
+                  "operator": "=",
+                  "rightTableField": "object_reference.obj_id"
+                }
+              },
+              {
+                "tableName": "tree",
+                "type": "INNER JOIN",
+                "condition": {
+                  "leftTableField": "object_reference.ref_id",
+                  "operator": "=",
+                  "rightTableField": "tree.child"
+                }
+              }
+            ],
+            "queryOptions": {
+              "responseTemplate": {
+                "parentId": "parent_id",
+                "nodeId": "ref_id",
+                "nodeData": {
+                  "label": "title"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

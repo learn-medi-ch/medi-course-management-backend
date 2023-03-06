@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "$ref": "../../../flux-eco/schemas/config-schemas/flux-eco-api-config-schema.json"
+    }
+  ],
+  "type": "object",
+  "properties": {
+    "outbounds": {
+      "type": "object",
+      "properties": {
+        "queryHandler": {
+          "$ref": "../../../flux-eco/schemas/mapping-schemas/flux-eco-api-outbounds-mapping-schema.json"
+        }
+      },
+      "required": ["queryHandler"]
+    }
+  }
+}

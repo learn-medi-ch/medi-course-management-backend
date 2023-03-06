@@ -1,0 +1,1 @@
+docker build  --no-cache ../../ -f Dockerfile -t fluxms/medi-course-management-backend:v2023-03-06-1

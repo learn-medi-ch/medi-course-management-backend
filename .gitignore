@@ -1,5 +1,8 @@
 /*
-app/flux-ilias-rest-api-client/libs
-!.gitignore
 !app
-!docker_build
+!.gitignore
+!CHANGELOG.md
+!LICENSE
+!metadata.json
+!provideEnvironmentsTemplate.sh
+!README.md

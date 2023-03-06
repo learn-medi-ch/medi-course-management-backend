@@ -1,34 +1,35 @@
-export class Api {
-    /**
-     * @param {string, function} boundActions
-     */
-    #boundActions
-    /**
-     * @param {RepositoryTreeHandler}
-     */
-    #repositoryTreeHandler
+/**
+ * @typedef {Object} MediCourseManagementBackend
+ * @property {Outbounds} outbounds
+ */
 
-    /**
-     * @param {string, function} boundActions
-     */
-    constructor(boundActions) {
-        this.#boundActions = boundActions
+/**
+ * @typedef {Object} Outbounds
+ * @property {function} getRepositoryTree
+ */
+
+export class Api {
+
+    #boundedActions
+
+    constructor(boundedActions) {
+        this.#boundedActions = boundedActions
     }
 
     /**
-     * @param {string, function} boundActions
+
      * @return {Promise<Api>}
      */
-    static async new(boundActions) {
-        return new Api(boundActions);
+    static async new(boundedActions) {
+        return new Api(boundedActions);
     }
 
     /**
      * Returns the repository tree.
      * @returns {Promise<Object>}
      */
-    async getRepositoryTree() {
-
+    async readPageStructure() {
+        return await this.#boundedActions.getRepositoryTree();
     }
 
 }
